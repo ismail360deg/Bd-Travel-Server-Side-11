@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
+// middle wares
 app.use(cors());
 app.use(express.json());
 
@@ -25,6 +26,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const servicesCollection = client.db("bdTravel").collection("services");
+        const reviewCollection = client.db("bdTravel").collection("reviews");
 
 
         // read
@@ -42,6 +44,14 @@ async function run() {
             const doubleSection = await servicesCollection.findOne(query);
             res.send(doubleSection);
         });
+
+        // reviews api
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        })
+
 
     }
     finally {
